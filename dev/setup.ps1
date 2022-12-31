@@ -56,8 +56,7 @@ $packageBuildPath = "$env:USERPROFILE\AppData\Roaming\Sublime Text\Packages\User
 New-Item $packageBuildPath
 
 Add-content -Path $packageBuildPath -Value "{"
-$location = get-location
-$secondLine = '    "cmd": ["' + $location + "$packageName\venv\Scripts\python.exe" + '", "$file"],'
+$secondLine = '    "cmd": ["' + (Get-item .).parent.fullname + "\venv\Scripts\python.exe" + '", "$file"],'
 $secondLine = $secondLine.replace('\', '/')
 Add-content -Path $packageBuildPath -Value $secondLine
 Add-content -Path $packageBuildPath -Value '    "file_regex": "^[ ]File \"(...?)\", line ([0-9]*)",'
