@@ -4,19 +4,28 @@ $packageName = (get-item .).parent.name
 
 
 #wget https://www.python.org/ftp/python/3.11.4/python-3.11.4-amd64.exe -o python.exe
-New-Item -ItemType Directory -Force -Path .\python | Out-Null
-$pythonPath = ((Get-Location).Path)+"\python\"
+#New-Item -ItemType Directory -Force -Path .\python | Out-Null
+#$pythonPath = ((Get-Location).Path)+"\python\"
 
-./python-install.exe /quiet DefaultJustForMeTargetDir=$pythonPath Include_launcher=0 
-rm ./python-install.exe
+#./python-install.exe /quiet DefaultJustForMeTargetDir=$pythonPath Include_launcher=0 
+#rm ./python-install.exe
 
 # Grab a fresh python installation
-#wget https://www.python.org/ftp/python/3.11.1/python-3.11.1-embed-amd64.zip -o python.zip
-#expand-archive python.zip
-#mv .\python\python311._pth .\python\python311.pth
-#mkdir .\python\DLLs
-#wget https://bootstrap.pypa.io/get-pip.py -o get-pip.py
-#python\python.exe get-pip.py
+wget https://www.python.org/ftp/python/3.11.1/python-3.11.1-embed-amd64.zip -o python.zip
+expand-archive python.zip
+mv .\python\python311._pth .\python\python311.pth
+mkdir .\python\DLLs
+wget https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+python\python.exe get-pip.py
+
+# Install tkinter
+expand-archive tk-files.zip .
+mv .\tk-files\tcl .\python\
+mv .\tk-files\tkinter .\python\Lib
+mv .\tk-files\_tkinter.pyd .\python\DLLs
+mv .\tk-files\tcl86t.dll .\python\DLLs
+mv .\tk-files\tk86t.dll .\python\DLLs
+rm tk-files*
 
 $exePath = "$env:TEMP\git.exe"
 
