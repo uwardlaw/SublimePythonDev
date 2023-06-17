@@ -1,12 +1,9 @@
 # Grab the package name
 $packageName = (get-item .).parent.name
 
-
-
 #wget https://www.python.org/ftp/python/3.11.4/python-3.11.4-amd64.exe -o python.exe
 #New-Item -ItemType Directory -Force -Path .\python | Out-Null
 #$pythonPath = ((Get-Location).Path)+"\python\"
-
 #./python-install.exe /quiet DefaultJustForMeTargetDir=$pythonPath Include_launcher=0 
 #rm ./python-install.exe
 
@@ -19,9 +16,12 @@ wget https://bootstrap.pypa.io/get-pip.py -o get-pip.py
 python\python.exe get-pip.py
 
 # Install tkinter
-expand-archive tk-files.zip .
+expand-archive tk-files.zip .\tk-files
+
+copy-item .\tk-files\tcl\tcl8.6\ .\python\Lib\ -recurse
+copy-item .\tk-files\tcl\tk8.6\ .\python\Lib\ -recurse
 mv .\tk-files\tcl .\python\
-mv .\tk-files\tkinter .\python\Lib
+mv .\tk-files\tkinter .\python\
 mv .\tk-files\_tkinter.pyd .\python\DLLs
 mv .\tk-files\tcl86t.dll .\python\DLLs
 mv .\tk-files\tk86t.dll .\python\DLLs
@@ -71,13 +71,15 @@ pip install -r ..\requirements.txt
 # Create a sublime build file for this project
 $packageBuildPath = "$env:USERPROFILE\AppData\Roaming\Sublime Text\Packages\User\$packageName.sublime-build"
 
-New-Item $packageBuildPath
+if (-not (Test-Path -Path $packageBuildPath -PathType Leaf)){
+   New-Item $packageBuildPath
 
-Add-content -Path $packageBuildPath -Value "{"
-$secondLine = '    "cmd": ["' + (Get-item .).parent.fullname + "\venv\Scripts\python.exe" + '", "$file"],'
-$secondLine = $secondLine.replace('\', '/')
-Add-content -Path $packageBuildPath -Value $secondLine
-Add-content -Path $packageBuildPath -Value '    "file_regex": "^[ ]File \"(...?)\", line ([0-9]*)",'
-Add-content -Path $packageBuildPath -Value '    "selector": "source.activate",'
-Add-content -Path $packageBuildPath -Value '    "env": {"PYTHONIOENCODING": "utf8"}'
-Add-content -Path $packageBuildPath -Value "}" 
+   Add-content -Path $packageBuildPath -Value "{"
+   $secondLine = '    "cmd": ["' + (Get-item .).parent.fullname + "\venv\Scripts\python.exe" + '", "$file"],'
+   $secondLine = $secondLine.replace('\', '/')
+   Add-content -Path $packageBuildPath -Value $secondLine
+   Add-content -Path $packageBuildPath -Value '    "file_regex": "^[ ]File \"(...?)\", line ([0-9]*)",'
+   Add-content -Path $packageBuildPath -Value '    "selector": "source.activate",'
+   Add-content -Path $packageBuildPath -Value '    "env": {"PYTHONIOENCODING": "utf8"}'
+   Add-content -Path $packageBuildPath -Value "}" 
+}
